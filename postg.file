@@ -1,0 +1,9 @@
+providerUrl="tcps://ems1.swim.faa.gov:55443"
+queue=wturner.cssiinc.com.STDDS.406b1fad-b8d5-433d-99ee-26f9d5a1037f.OUT
+connectionFactory=wturner.cssiinc.com.CF
+username=wturner.cssiinc.com
+password=b2E1PL_3SZWY0B7FQEuCcA
+vpn=STDDS
+metrics=true
+output=com.harris.cinnato.outputs.PostgOutput
+json=true
