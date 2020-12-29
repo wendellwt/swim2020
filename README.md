@@ -1,4 +1,4 @@
-# Consumer JumpStart
+# CSSI's SWIM interface
 This is Wendell's mods to the original JMS Consumer jumpstart
 to receive data and store into PostGIS.
 
