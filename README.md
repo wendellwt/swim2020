@@ -2,6 +2,15 @@
 This is Wendell's mods to the original JMS Consumer jumpstart
 to receive data and store into PostGIS.
 
+Differences in the SWIM jumpstart kit and this repo:
+
+- rm lib/jumpstart-jar-with-dependencies.jar
+- postg.file
+- makefile
+- pom.xml
+- src/main/java/com/harris/cinnato/outputs/PostgOutput.java
+
+
 ### Orig:
 This is a simple JMS Consumer that allows for testing the connection to SCDS.
 It is not intended to be used for a real world application.
