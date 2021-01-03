@@ -15,8 +15,15 @@ import org.json.XML;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+// Jan 2
+import java.util.HashMap;
+
 public class PostgOutput extends Output {
     java.sql.Connection pgconn = null;
+
+    // the heck with a struct or list, we'll just have one map for each element
+    HashMap<Integer, String> acidmap   = new HashMap<Integer, String>();
+    HashMap<Integer, String> actypemap = new HashMap<Integer, String>();
 
     public PostgOutput(Config config) {
         super(config);
@@ -61,20 +68,46 @@ public class PostgOutput extends Output {
         int cnt = 0;
         for(int k=0; k < recordsArray.length(); k++){
             JSONObject trackElem = null;
+            JSONObject fpElem    = null;
 
             JSONObject elem      = (JSONObject) recordsArray.get(k);
             try {
                 trackElem     = (JSONObject) elem.get("track");
-                Double lon    = (Double)     trackElem.get("lon");
-                Double lat    = (Double)     trackElem.get("lat");
-                Integer tnum  = (Integer)    trackElem.get("trackNum");
-                String mrt    = (String)     trackElem.get("mrtTime");
-                Integer alt   = (Integer)    trackElem.get("reportedAltitude");
+
+                Double lon    = (Double)  trackElem.get("lon");
+                Double lat    = (Double)  trackElem.get("lat");
+                Integer tnum  = (Integer) trackElem.get("trackNum");
+                String mrt    = (String)  trackElem.get("mrtTime");
+                Integer alt   = (Integer) trackElem.get("reportedAltitude");
+
+                // -------------- attempt associated element
+                String acid   = (String) "z";
+                String acType = (String) "x";
+
+                try {
+                    fpElem   = (JSONObject) elem.get("flightPlan");
+
+                    acid     = (String) fpElem.get("acid");
+                    acType   = (String) fpElem.get("acType");
+
+                    // insert each into their hash maps
+                    acidmap.put(  tnum, acid);
+                    actypemap.put(tnum, acType);
+
+                    //System.out.println("fltPlan: acid:" + acid + "  actype:" + acType);
+                } catch (Exception e) {  // either mal-formed asdex msg OR bad insert
+                    // System.out.println("no fp");
+                }
+
+                acid   = acidmap.getOrDefault(tnum, "unk");
+                acType = actypemap.getOrDefault(tnum, "unk");
 
                 PreparedStatement s = pgconn.prepareStatement(
-                    "INSERT INTO asdex (track, ptime, lon, lat, altitude, position) VALUES " +
-                    "(" + tnum +
+                    "INSERT INTO asdex (acid, track, ptime, actype, lon, lat, altitude, position) VALUES " +
+                    "('" + acid + "'" +
+                    "," + tnum +
                     ", '" + mrt + "'" +
+                    ",'" + acType +  "'" +
                     "," + lon + ',' + lat + ',' + alt +
                     ", ST_GeomFromEWKT('SRID=4326;POINT(" + lon + ' ' +  lat + ")'));");
 
