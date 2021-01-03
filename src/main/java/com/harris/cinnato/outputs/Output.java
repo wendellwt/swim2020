@@ -16,7 +16,8 @@ public abstract class Output {
     protected String convert(String message) {
         if (this.config.getBoolean("json")) {
             JSONObject xmlJSONObj = XML.toJSONObject(message);
-            return xmlJSONObj.toString();
+            return xmlJSONObj.toString(4);
+            //wt: return xmlJSONObj.toString();
         } else {
             return message;
         }
